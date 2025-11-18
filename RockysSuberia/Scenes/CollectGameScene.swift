@@ -53,7 +53,6 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         node.run(.sequence([fall, remove]))
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        <#code#>
     }
     override func update(_ currentTime: TimeInterval) {
         

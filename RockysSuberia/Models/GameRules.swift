@@ -8,6 +8,7 @@
 // this model layer knows this is lettuce its -10 points
 import Foundation
 
+
 class GameRules {
     static var wantedIngredient = "tomato"
     
