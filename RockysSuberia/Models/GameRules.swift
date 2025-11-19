@@ -10,18 +10,17 @@ import Foundation
 
 
 class GameRules {
-    static var wantedIngredient = "tomato"
-    
-    static func randomIngredients() -> Ingredient {
-        let wanted = Ingredient(name: "tomato", imageName: "tomato", pointValue: 10, isWanted: true)
-
-        let wrongOnes = [
-            Ingredient(name: "fish", imageName: "fish", pointValue: -10, isWanted: false)
-        ]
-        let bomb = Ingredient(name: "bomb", imageName:"bomb", pointValue: -20, isWanted: false)
-        
-        let pool = [wanted] + wrongOnes + [bomb]
-        
-        return pool.randomElement() ?? wanted
+    static var wantedIngredient = Ingredient(
+        name: "tomato", imageName: "tomato", pointValue: 10, isWanted: true
+    )
+    static let allIngredients: [Ingredient] = [
+        Ingredient(name: "tomato", imageName: "tomato", pointValue: 10, isWanted: true),
+        Ingredient(name: "cheese", imageName: "cheese", pointValue: 10, isWanted: true),
+        Ingredient(name: "lettuce", imageName: "lettuce", pointValue: 10, isWanted: true),
+        Ingredient(name: "hornet", imageName: "hornet", pointValue: -10, isWanted: false),
+        Ingredient(name: "bomb", imageName: "bomb", pointValue: -20, isWanted: false)
+    ]
+    static func randomIngredient() -> Ingredient {
+        return allIngredients.randomElement( ) ?? wantedIngredient
     }
 }

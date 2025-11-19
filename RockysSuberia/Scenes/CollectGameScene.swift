@@ -29,7 +29,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
     func setupScoreLabel() {
         scoreLabel = SKLabelNode(text: "Score: 0")
         scoreLabel.fontSize = 40
-        scoreLabel.position = CGPoint(x: 50, y: size.height - 50)
+        scoreLabel.position = CGPoint(x: 100, y: size.height - 50)
         addChild(scoreLabel)
     }
     func startSpawning() {
@@ -39,20 +39,27 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         ])))
     }
     func spawnIngredients() {
-        let ingredients = GameRules.randomIngredients()
+        let ingredients = GameRules.randomIngredient()
         
         let node = SKSpriteNode(imageNamed: ingredients.imageName)
         node.name = ingredients.name
+        
+        node.userData = ["points": ingredients.pointValue]
         
         node.position = CGPoint(
             x: CGFloat.random(in: 40...(size.width - 40)),
             y: size.height + 50
         )
+        addChild(node)
+        
         let fall = SKAction.moveTo(y: -100, duration: 3.0)
         let remove = SKAction.removeFromParent()
         node.run(.sequence([fall, remove]))
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            basket.position.x = touch.location(in:self).x
+        }
     }
     override func update(_ currentTime: TimeInterval) {
         
