@@ -13,6 +13,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
     var scoreLabel: SKLabelNode!
     var orderLabel: SKLabelNode!
     var score = 0
+    var progressLabel: SKLabelNode!
     
     var collectedCounts: [String: Int] = [:]
     
@@ -26,6 +27,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         setupScoreLabel()
         setupOrderLabel()
         startSpawning()
+        setupProgressLabel()
     }
     func setupBasket() {
         basket = SKSpriteNode(imageNamed: "basket")
@@ -51,9 +53,10 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         
         let text = GameRules.currentOrder.required
             .map { "\($0.key): \($0.value)" }
-            .joined(separator: ", ")
-        orderLabel.text = "Collect: \(text)"
-        orderLabel.position = CGPoint(x: size.width/2, y: size.height - 50)
+            .joined(separator: "\n")
+        orderLabel.text = "Collect: \n\(text)"
+        orderLabel.verticalAlignmentMode = .top
+        orderLabel.fontSize = 18
 
         addChild(orderLabel)
     }
@@ -92,11 +95,22 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
             guard node.name != nil else { continue }
             
             if basket.frame.intersects(node.frame) {
+                let name = node.name!
+                //shake
+                if name == "bomb" || name == "hornet" {
+                    shakeScreen()
+                }
+                collectedCounts[name, default: 0] += 1
+                updateProgressLabel()
+
+
                 if let points = node.userData?["points"] as? Int {
                     score += points
                     scoreLabel.text = "Score: \(score)"
                 }
                 node.removeFromParent()
+                
+                checkIfOrderComplete()
             }
         }
     }
@@ -107,7 +121,65 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
                 return
             }
         }
-      //  goToThrowScene()
+        showOrderCompleteText()
+        goToThrowScene()
+    }
+    func goToThrowScene() {
+        let nextScene = ThrowScene(size: self.size)
+        nextScene.scaleMode = .aspectFill
+        
+        self.view?.presentScene(
+            nextScene,
+            transition: SKTransition.fade(withDuration: 1.0)
+        )
+    }
+    func showOrderCompleteText() {
+        let label = SKLabelNode(fontNamed: "AvenirNext-Bold")
+        label.text = "ORDER COMPLETE!"
+        label.fontSize = 40
+        label.fontColor = .yellow
+        label.position = CGPoint(x: size.width/2, y: size.height/2)
+        label.zPosition = 999
+        addChild(label)
+
+        label.run(.sequence([
+            .scale(to: 1.2, duration: 0.2),
+            .wait(forDuration: 3.0),
+            .fadeOut(withDuration: 0.5),
+            .run { self.goToThrowScene() }
+        ]))
+    }
+    func setupProgressLabel() {
+        progressLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
+        progressLabel.fontSize = 20
+        progressLabel.fontColor = .yellow
+        progressLabel.position = CGPoint(x: size.width/2, y: size.height - 200)
+        progressLabel.zPosition = 3
+        progressLabel.horizontalAlignmentMode = .center
+        progressLabel.verticalAlignmentMode = .top
+
+        updateProgressLabel()
+        addChild(progressLabel)
+    }
+    func updateProgressLabel() {
+        var lines: [String] = []
+
+        for (ingredient, needed) in GameRules.currentOrder.required {
+            let collected = collectedCounts[ingredient, default: 0]
+            lines.append("\(ingredient): \(collected)/\(needed)")
+        }
+
+        progressLabel.text = lines.joined(separator: "\n")
+    }
+    func shakeScreen() {
+        guard let view = self.view else { return }
+
+        let shake = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        shake.timingFunction = CAMediaTimingFunction(name: .linear)
+        shake.duration = 0.3
+        shake.values = [ -10, 10, -8, 8, -5, 5, 0 ]
+
+        view.layer.add(shake, forKey: "shake")
     }
 }
 

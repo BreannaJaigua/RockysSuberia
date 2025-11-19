@@ -14,7 +14,7 @@ struct Order {
 class GameRules {
     static var currentOrder = Order(required: [:])
     
-    static var collectibles = ["tomato", "cheese", "lettuce","hornet","bomb"]
+    static var collectibles = ["tomato", "cheese", "lettuce"]
     static let allIngredients: [Ingredient] = [
         Ingredient(name: "tomato", imageName: "tomato", pointValue: 10, isWanted: true),
         Ingredient(name: "cheese", imageName: "cheese", pointValue: 10, isWanted: true),
