@@ -1,7 +1,7 @@
 # RockysSuberia
 
 Course: CSC 214 - Mobile App Development
-Instructor: _
+Instructor: Arthur Roolfs
 
 Name & User IDs:   _
 Email:  _
@@ -18,4 +18,4 @@ Custom features (if applicable):
     
 I affirm that I have not given or received any unauthorized help for this assignment, and that this work is my own.
 Date:   
-    _
+    11/20/2025
