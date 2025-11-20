@@ -38,7 +38,7 @@ struct AnimationView: View {
         .init(image: "6", text: "Starting with Rocky's at the University of Rochester! Complete his sub order to save the university from being a BIG. SUB!")
     ]
     
-    let panelDuration: Double = 10.0
+    let panelDuration: Double = 5.0
     
     var body: some View {
         ZStack {
@@ -67,8 +67,8 @@ struct AnimationView: View {
         }
         
         //calls the completion handler after last panel
-        let totalTime = panelDuration * Double(panels.count - 1)
-        DispatchQueue.main.asyncAfter(deadline: .now() + totalTime) {
+        let totalTime = panelDuration * Double(panels.count)
+        DispatchQueue.main.asyncAfter(deadline: .now() + totalTime + 0.1) {
             onFinish()
         }
     }

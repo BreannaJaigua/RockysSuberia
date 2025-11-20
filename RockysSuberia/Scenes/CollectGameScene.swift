@@ -7,6 +7,7 @@
 
 import Foundation
 import SpriteKit
+import AVFoundation
 
 class CollectScene: SKScene, SKPhysicsContactDelegate {
     var basket: SKSpriteNode!
@@ -14,6 +15,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
     var orderLabel: SKLabelNode!
     var score = 0
     var progressLabel: SKLabelNode!
+    var backgroundMusicPlayer: AVAudioPlayer?
     
     var collectedCounts: [String: Int] = [:]
     
@@ -22,6 +24,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
    
     override func didMove(to view: SKView) {
         addBackground()
+        playBackgroundMusic()
         //new random order
         GameRules.generateRandomOrder()
         
@@ -32,6 +35,23 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         setupProgressLabel()
         setupHearts()
     }
+    func playBackgroundMusic() {
+            guard backgroundMusicPlayer == nil else { return } // play only once
+            
+            guard let url = Bundle.main.url(forResource: "Kubbi - Digestive biscuit", withExtension: "mp3") else {
+                print("Music file not found")
+                return
+            }
+            
+            do {
+                backgroundMusicPlayer = try AVAudioPlayer(contentsOf: url)
+                backgroundMusicPlayer?.numberOfLoops = -1  // loop forever
+                backgroundMusicPlayer?.volume = 0.8
+                backgroundMusicPlayer?.play()
+            } catch {
+                print("Failed to load music: \(error)")
+            }
+        }
     func addBackground() {
         let bg = SKSpriteNode(imageNamed: "thePit")
         bg.position = CGPoint(x: size.width / 2, y: size.height / 2)
@@ -127,6 +147,9 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
             basket.position.x = touch.location(in:self).x
         }
     }
+    override func willMove(from view: SKView) {
+            backgroundMusicPlayer?.stop()
+        }
     override func update(_ currentTime: TimeInterval) {
         for node in children {
             guard node != basket && node != scoreLabel else { continue }
