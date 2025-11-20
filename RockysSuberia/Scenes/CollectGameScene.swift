@@ -16,9 +16,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
     var score = 0
     var progressLabel: SKLabelNode!
     var backgroundMusicPlayer: AVAudioPlayer?
-    
     var collectedCounts: [String: Int] = [:]
-    
     var lives = 3
     var heartNode: [SKSpriteNode] = []
    
@@ -135,7 +133,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         let miss = SKAction.run { [weak self, weak node] in
             guard let self = self, let node = node else { return }
 
-            if GameRules.badCollectibles.contains(node.name ?? "") {
+            if GameRules.collectibles.contains(node.name ?? "") {
                 self.loseLife()
             }
         }
@@ -157,11 +155,15 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
             
             if basket.frame.intersects(node.frame) {
                 let name = node.name!
-                //shake
+                if name == "bomb" {
+                    showExplosion(at: node.position)
+                }
                 if name == "bomb" || name == "hornet" {
                     shakeScreen()
                     loseLife()
                 }
+                node.removeFromParent()
+
                 collectedCounts[name, default: 0] += 1
                 updateProgressLabel()
 
@@ -176,6 +178,17 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
+    func showExplosion(at position: CGPoint) {
+        if let explosion = SKEmitterNode(fileNamed: "blowUp.sks") {
+            explosion.position = position
+            explosion.zPosition = 1000
+            addChild(explosion)
+            explosion.run(.sequence([
+                .wait(forDuration: 1.0),
+                .removeFromParent()
+            ]))
+        }
+    }
     func checkIfOrderComplete() {
         for(ingredient, neededAmount) in GameRules.currentOrder.required {
             let collected = collectedCounts[ingredient, default:0 ]
@@ -184,16 +197,6 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         showOrderCompleteText()
-        goToThrowScene()
-    }
-    func goToThrowScene() {
-        let nextScene = ThrowScene(size: self.size)
-        nextScene.scaleMode = .aspectFill
-        
-        self.view?.presentScene(
-            nextScene,
-            transition: SKTransition.fade(withDuration: 1.0)
-        )
     }
     func showOrderCompleteText() {
         let label = SKLabelNode(fontNamed: "AvenirNext-Bold")
@@ -242,6 +245,15 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         shake.values = [ -10, 10, -8, 8, -5, 5, 0 ]
 
         view.layer.add(shake, forKey: "shake")
+    }
+    func goToThrowScene() {
+        let nextScene = ThrowScene(size: self.size)
+        nextScene.scaleMode = .aspectFill
+        
+        self.view?.presentScene(
+            nextScene,
+            transition: SKTransition.fade(withDuration: 1.0)
+        )
     }
     func gameOver() {
         let gameOverLabel = SKLabelNode(text: "Rocky Ate You!")
