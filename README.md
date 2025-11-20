@@ -2,6 +2,7 @@
 
 Course: CSC 214 - Mobile App Development
 Instructor: _
+
 Name & User IDs:   _
 Email:  _
 
