@@ -30,7 +30,7 @@ struct AnimationView: View {
     
     //panel array for images and the text accompanied with them
     let panels: [Panel] = [
-        .init(image: "1", text: "It all started with a simple yellow jacket..."),
+        .init(image: "littlejacket", text: "It all started with a simple yellow jacket..."),
         .init(image: "2", text: "who took a bite out of an interesting piece of food..."),
         .init(image: "3", text: "and turned into..."),
         .init(image: "4", text: "A Michelin Star Chef named Rocky!!!"),
@@ -42,6 +42,7 @@ struct AnimationView: View {
     
     var body: some View {
         ZStack {
+            Color("AnimationBackgroundColor").ignoresSafeArea()
             ForEach(panels.indices, id: \.self) { i in
                 panelView(panel: panels[i], index: i)
                     .opacity(index == i ? 1 : 0)

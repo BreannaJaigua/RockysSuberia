@@ -9,7 +9,7 @@ import Foundation
 import SpriteKit
 
 class ThrowScene: SKScene {
-    
+    var onReturnToMenu: (() -> Void)?
     var rocky: SKSpriteNode!
     var mouth: SKSpriteNode!
     var sub: SKSpriteNode!
@@ -65,6 +65,7 @@ class ThrowScene: SKScene {
 
         throwSub(dx: dx, dy: dy)
     }
+    
     func throwSub(dx: CGFloat, dy: CGFloat) {
 
         // convert “drag distance” into velocity
@@ -118,6 +119,10 @@ class ThrowScene: SKScene {
         label.position = CGPoint(x: size.width/2, y: size.height/2)
         label.zPosition = 10
         addChild(label)
+        
+        run(SKAction.wait(forDuration: 2.0)) {
+            self.goBackToMenu()
+        }
     }
     func startHazards() {
         let spawnAction = SKAction.repeatForever(
@@ -204,6 +209,13 @@ class ThrowScene: SKScene {
         scene.scaleMode = scaleMode
         self.view?.presentScene(scene, transition: .fade(withDuration: 1.0))
     }
+    
+    func goBackToMenu() {
+        if let vc = self.view?.window?.rootViewController as? GameViewController {
+            vc.returnToMenu()
+        }
+    }
+
     override func update(_ currentTime: TimeInterval) {
         checkHazardCollisions()
     }
