@@ -15,8 +15,8 @@ class ThrowScene: SKScene {
     var touchStartPoint: CGPoint?
     
     override func didMove(to view: SKView) {
-        backgroundColor = .black
-        
+        addBackground()
+
         setupMouth()
         startRockyMovement()
         setupSub()
@@ -41,6 +41,12 @@ class ThrowScene: SKScene {
         let loop = SKAction.repeatForever(SKAction.sequence([moveRight, moveLeft]))
         
         mouth.run(loop)
+    }
+    func addBackground() {
+        let bg = SKSpriteNode(imageNamed: "uOfR")
+        bg.position = CGPoint(x: frame.midX, y: frame.midY)
+        bg.zPosition = -10
+            addChild(bg)
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
