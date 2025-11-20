@@ -17,9 +17,11 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
     
     var collectedCounts: [String: Int] = [:]
     
+    var lives = 3
+    var heartNode: [SKSpriteNode] = []
+   
     override func didMove(to view: SKView) {
-        backgroundColor = .black
-        
+        addBackground()
         //new random order
         GameRules.generateRandomOrder()
         
@@ -28,6 +30,14 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         setupOrderLabel()
         startSpawning()
         setupProgressLabel()
+        setupHearts()
+    }
+    func addBackground() {
+        let bg = SKSpriteNode(imageNamed: "thePit")
+        bg.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        bg.size = CGSize(width: size.width, height: size.height)
+        bg.zPosition = -10
+            addChild(bg)
     }
     func setupBasket() {
         basket = SKSpriteNode(imageNamed: "basket")
@@ -60,6 +70,27 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
 
         addChild(orderLabel)
     }
+    func setupHearts() {
+        heartNode = []
+        for i in 0..<3 {
+            let heart = SKSpriteNode(imageNamed: "heart")
+            heart.size = CGSize(width: 40, height: 40)
+            heart.position = CGPoint(x: 40 + CGFloat(i) * 50, y: size.height - 40)
+            heart.zPosition = 10
+            addChild(heart)
+            heartNode.append(heart)
+        }
+    }
+    func loseLife() {
+        if lives > 0 {
+            lives -= 1
+            let lostHeart = heartNode[lives]
+            lostHeart.alpha = 0.2
+        }
+        if lives == 0 {
+            gameOver()
+        }
+    }
     func startSpawning() {
         run(.repeatForever(.sequence([
             .run { self.spawnIngredients() },
@@ -81,8 +112,15 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         addChild(node)
         
         let fall = SKAction.moveTo(y: -100, duration: 3.0)
+        let miss = SKAction.run { [weak self, weak node] in
+            guard let self = self, let node = node else { return }
+
+            if GameRules.badCollectibles.contains(node.name ?? "") {
+                self.loseLife()
+            }
+        }
         let remove = SKAction.removeFromParent()
-        node.run(.sequence([fall, remove]))
+        node.run(.sequence([fall, remove, miss]))
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
@@ -99,6 +137,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
                 //shake
                 if name == "bomb" || name == "hornet" {
                     shakeScreen()
+                    loseLife()
                 }
                 collectedCounts[name, default: 0] += 1
                 updateProgressLabel()
@@ -181,5 +220,30 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
 
         view.layer.add(shake, forKey: "shake")
     }
-}
+    func gameOver() {
+        let gameOverLabel = SKLabelNode(text: "Rocky Ate You!")
+        gameOverLabel.fontName = "AvenirNext-Bold"
+        gameOverLabel.fontSize = 52
+        gameOverLabel.fontColor = .red
+        gameOverLabel.position = CGPoint(x: frame.midX, y: frame.midY)
+        gameOverLabel.zPosition = 999
+        addChild(gameOverLabel)
+
+        // little shake effect for drama
+        let shake = SKAction.sequence([
+            SKAction.moveBy(x: 10, y: 0, duration: 0.05),
+            SKAction.moveBy(x: -20, y: 0, duration: 0.05),
+            SKAction.moveBy(x: 10, y: 0, duration: 0.05)
+        ])
+        gameOverLabel.run(shake)
+
+        run(.sequence([
+            .wait(forDuration: 2),
+            .run {
+                let newScene = CollectScene(size: self.size)
+                newScene.scaleMode = .aspectFill
+                self.view?.presentScene(newScene, transition: .fade(withDuration: 1.0))
+            }
+        ]))
+    }}
 
