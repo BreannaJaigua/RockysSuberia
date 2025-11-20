@@ -1,16 +1,16 @@
 # RockysSuberia
 
 Course: CSC 214 - Mobile App Development
-Instructor: 
-Arthur Roolfs 
+Instructor: Arthur Roolfs 
 
-Name & User IDs:   
-Athena	Cao,	acao8	
+Name & User IDs:
+
+Athena	Cao, acao8	
 Anela	Takiguchi,	Mtakiguc	
 Andrea	Alave,	aalave	
 Breanna	Jaigua,	bjaigua	
 Rainah	Allen,	rallen28	
-Email:  acao
+Email:  acao , aalave 
 
 
 Assignment/Project #: COURSE PROJECT - Binding Bugs
