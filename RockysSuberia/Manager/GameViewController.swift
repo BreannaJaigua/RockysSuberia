@@ -42,12 +42,11 @@ class GameViewController: UIViewController {
 
                 if let view = self.view as? SKView {
                     let scene = CollectScene(size: view.bounds.size)
-                    scene.scaleMode = .aspectFill
+                    scene.scaleMode = .aspectFit
                     view.presentScene(scene)
 
                     view.ignoresSiblingOrder = true
-                    view.showsFPS = true
-                    view.showsNodeCount = true
+
                 }
             }
         }

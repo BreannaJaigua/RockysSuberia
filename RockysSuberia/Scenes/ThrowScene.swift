@@ -31,14 +31,13 @@ class ThrowScene: SKScene {
     func setupSub() {
         sub = SKSpriteNode(imageNamed: "sub")
         sub.position = CGPoint(x: size.width/2, y: 100)
-        sub.size = CGSize(width: 150, height: 60)
         sub.zPosition = 10
         addChild(sub)
     }
     //continous movement of mouth
     func startRockyMovement() {
-        let moveRight = SKAction.moveTo(x: size.width - 85, duration: 2.0)
-        let moveLeft = SKAction.moveTo(x: 85, duration: 2.0)
+        let moveRight = SKAction.moveTo(x: size.width - 85, duration: 1.0)
+        let moveLeft = SKAction.moveTo(x: 85, duration: 1.0)
         let loop = SKAction.repeatForever(SKAction.sequence([moveRight, moveLeft]))
         
         mouth.run(loop)

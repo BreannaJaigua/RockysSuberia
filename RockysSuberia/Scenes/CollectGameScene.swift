@@ -52,8 +52,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         }
     func addBackground() {
         let bg = SKSpriteNode(imageNamed: "thePit")
-        bg.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        bg.size = CGSize(width: size.width, height: size.height)
+        bg.position = CGPoint(x: frame.midX, y: frame.midY)
         bg.zPosition = -10
             addChild(bg)
     }
@@ -78,13 +77,6 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         orderLabel.fontColor = .white
         orderLabel.position = CGPoint(x: size.width/2, y: size.height - 50)
         orderLabel.zPosition = 3
-        
-        let text = GameRules.currentOrder.required
-            .map { "\($0.key): \($0.value)" }
-            .joined(separator: "\n")
-        orderLabel.text = "Collect: \n\(text)"
-        orderLabel.verticalAlignmentMode = .top
-        orderLabel.fontSize = 18
 
         addChild(orderLabel)
     }
@@ -93,7 +85,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
         for i in 0..<3 {
             let heart = SKSpriteNode(imageNamed: "heart")
             heart.size = CGSize(width: 40, height: 40)
-            heart.position = CGPoint(x: 40 + CGFloat(i) * 50, y: size.height - 40)
+            heart.position = CGPoint(x: 40 + CGFloat(i) * 50, y: size.height - 70)
             heart.zPosition = 10
             addChild(heart)
             heartNode.append(heart)
@@ -162,8 +154,7 @@ class CollectScene: SKScene, SKPhysicsContactDelegate {
                     shakeScreen()
                     loseLife()
                 }
-                node.removeFromParent()
-
+                
                 collectedCounts[name, default: 0] += 1
                 updateProgressLabel()
 
